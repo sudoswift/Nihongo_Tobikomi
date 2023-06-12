@@ -51,8 +51,11 @@
 		6F5B80942A372C1200FB2576 /* Nihongo_Tobikomi */ = {
 			isa = PBXGroup;
 			children = (
-				6F5B80952A372C1200FB2576 /* Nihongo_TobikomiApp.swift */,
 				6F5B80972A372C1200FB2576 /* ContentView.swift */,
+				6F5B80952A372C1200FB2576 /* Nihongo_TobikomiApp.swift */,
+				6F5B80A32A372C7E00FB2576 /* View */,
+				6F5B80A42A372C8600FB2576 /* Model */,
+				6F5B80A52A372C8C00FB2576 /* ViewModel */,
 				6F5B80992A372C1300FB2576 /* Assets.xcassets */,
 				6F5B809B2A372C1300FB2576 /* Preview Content */,
 			);
@@ -65,6 +68,27 @@
 				6F5B809C2A372C1300FB2576 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		6F5B80A32A372C7E00FB2576 /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		6F5B80A42A372C8600FB2576 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		6F5B80A52A372C8C00FB2576 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

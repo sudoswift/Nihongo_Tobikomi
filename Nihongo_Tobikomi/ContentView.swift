@@ -9,16 +9,16 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "figure.volleyball")
-                .font(.system(size: 60))
-                .foregroundColor(.black)
-                .padding(.bottom, 60)
-            Text("にほんご飛び込み")
-                .font(.largeTitle)
-                .fontWeight(.bold)
+        TabView{
+            mainView()
+                .tabItem {
+                    Label("ナウ", systemImage: "list.dash")
+                }
+            bookmarkView()
+                .tabItem {
+                    Label("お気に入り", systemImage: "book.fill")
+                }
         }
-        .padding()
     }
 }
 

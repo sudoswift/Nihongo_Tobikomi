@@ -10,7 +10,14 @@ import SwiftUI
 struct mainView: View {
     var body: some View {
         NavigationStack {
-            Text("NOW VIEW")
+            List{
+                Text("JLPT N1")
+                Text("JLPT N2")
+                Text("JLPT N3")
+                Text("JLPT N4")
+                Text("JLPT N5")
+            }//List
+            .listStyle(.inset)
                 .navigationTitle("ソヒョン")
                 .toolbar {
                     ToolbarItemGroup(placement: .navigationBarTrailing){
@@ -33,7 +40,7 @@ struct mainView: View {
                         } //setting Button & sheetView 예정
                         .tint(.black)
                     }
-                }
+                }//toolbar
         }//NavigationStack
     }
 }

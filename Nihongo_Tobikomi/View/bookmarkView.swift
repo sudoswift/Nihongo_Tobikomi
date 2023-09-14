@@ -9,7 +9,28 @@ import SwiftUI
 
 struct bookmarkView: View {
     var body: some View {
-        Text("お気に入り")
+        NavigationStack {
+            Text("お気に入り")
+                .navigationBarTitle("お気に入り", displayMode: .inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing){
+                        Button {
+                            print("setting")
+                        } label: {
+                            Image(systemName: "gearshape")
+                        } //setting Button & sheetView 예정
+                        .tint(.black)
+                    }
+                    ToolbarItem(placement: .navigationBarLeading){
+                        Button {
+                            print("setting")
+                        } label: {
+                            Image(systemName: "flame")
+                        } //setting Button & sheetView 예정
+                        .tint(.black)
+                    }
+                }//toolbar
+        }
     }
 }
 

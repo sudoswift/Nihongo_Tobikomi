@@ -18,7 +18,7 @@ struct ContentView: View {
                 .tabItem {
                     Label("お気に入り", systemImage: "book.fill")
                 }
-        }
+        }//TabView
     }
 }
 

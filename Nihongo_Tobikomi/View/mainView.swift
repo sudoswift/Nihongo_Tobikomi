@@ -23,14 +23,14 @@ struct mainView: View {
                         Button {
                             print("ranking")
                         } label: {
-                            Image(systemName: "crown")
+                            Image(systemName: "medal")
                         } //ranking Button
                         .tint(.black)
                         Button {
                             print("setting")
                         } label: {
                             Image(systemName: "gearshape")
-                        } //setting Button
+                        } //setting Button & sheetView 예정
                         .tint(.black)
                     }
                 }

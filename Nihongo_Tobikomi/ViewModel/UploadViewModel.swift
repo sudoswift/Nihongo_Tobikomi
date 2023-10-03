@@ -9,6 +9,8 @@ import Foundation
 import FirebaseAuth
 import Firebase
 import FirebaseStorage
+import FirebaseCore
+import FirebaseFirestore
 
 class UploadViewModel: ObservableObject{
     @Published var uploadList: [Upload] = []

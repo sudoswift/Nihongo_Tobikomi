@@ -29,8 +29,22 @@ class UploadViewModel: ObservableObject{
             Upload(kanji: "例", hanguru: "init예시", kanjiLevel: "N1", createdAt: Date())
         ]
     }
-    
-    
+    //MARK: - add data
+    func addData() {
+        Task{
+            do{
+                try await database.collection("Upload").document(UUID().uuidString)
+                    .setData([
+                        "kanji" : kanji,
+                        "hanguru" : hanguru,
+                        "kanjiLevel" : kanjiLevel,
+                        "createdAt" : createdAt,
+                    ])
+            }catch{
+                print("UploadViewModel addData error")
+            }
+        }//Task
+    }// addData()
     
     
     

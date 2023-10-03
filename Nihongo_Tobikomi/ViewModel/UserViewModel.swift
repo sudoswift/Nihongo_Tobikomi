@@ -31,6 +31,6 @@ class UserViewModel: ObservableObject{
     }
     //MARK:- Fetch Data
     let database = Firestore.firestore()
-    
+    //MARK: - 
     
 }// class UserViewModel

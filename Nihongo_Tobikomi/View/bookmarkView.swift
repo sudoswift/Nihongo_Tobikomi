@@ -29,7 +29,7 @@ struct bookmarkView: View {
                 }//履歴VStack
                 // N1~N2 는 List로 만들기
             }//VStack
-            .navigationBarTitle("お気に入り", displayMode: .inline)
+            .navigationBarTitle("復習", displayMode: .inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing){
                     Button {

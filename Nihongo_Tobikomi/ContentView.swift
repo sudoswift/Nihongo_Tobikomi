@@ -12,11 +12,11 @@ struct ContentView: View {
         TabView{
             mainView()
                 .tabItem {
-                    Label("ナウ", systemImage: "list.dash")
+                    Label("学習", systemImage: "list.bullet.rectangle.portrait.fill")// list.dash
                 }
             bookmarkView()
                 .tabItem {
-                    Label("お気に入り", systemImage: "book.fill")
+                    Label("復習", systemImage: "book.fill")
                 }
         }//TabView
     }

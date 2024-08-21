@@ -22,7 +22,7 @@ class LearnViewModel: ObservableObject{
     
     func fetchWords(for level: String) {
         let wordsRef = db.collection("Learn").document(level).collection("Words")
-        wordsRef.getDocuments { snapshot, error in
+        wordsRef.order(by: "createdAt", descending: true).getDocuments { snapshot, error in
             if let snapshot = snapshot {
                 self.words = snapshot.documents.compactMap { document in
                     let data = document.data()

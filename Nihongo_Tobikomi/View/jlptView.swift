@@ -9,53 +9,47 @@ import SwiftUI
 
 struct jlptView: View {
     var level: String
-    @StateObject private var learnviewModel = LearnViewModel()
-    @State private var showingAddWordView = false
-    
+    @StateObject private var learnViewModel = LearnViewModel()
+    @State private var showAddWordView = false
+
     var body: some View {
-        VStack {
-            List(learnviewModel.words) { word in
-                VStack(alignment: .leading) {
-                    Text(word.jpn)
-                        .font(.headline)
-                    Text(word.kr)
-                        .font(.subheadline)
-                    Text("Grade: \(word.grade) | Year: \(word.testYear)")
-                        .font(.footnote)
-                        .foregroundColor(.gray)
-                    Text("Created at: \(word.createdAt, formatter: learnviewModel.dateFormatter)")
-                        .font(.footnote)
-                        .foregroundColor(.gray)
+        ZStack(alignment: .bottomTrailing) {
+            VStack {
+                List(learnViewModel.words) { word in
+                    VStack(alignment: .leading) {
+                        Text(word.jpn)
+                            .font(.headline)
+                        Text(word.kr)
+                            .font(.subheadline)
+                        Text("Grade: \(word.grade) | Year: \(word.testYear)")
+                            .font(.footnote)
+                            .foregroundColor(.gray)
+                        Text("Created at: \(word.createdAt, formatter: learnViewModel.dateFormatter)")
+                            .font(.footnote)
+                            .foregroundColor(.gray)
+                    }
                 }
+                .onAppear {
+                    learnViewModel.fetchWords(for: level)
+                }
+                .navigationTitle(level)
             }
             
-            // Floating action button
-            VStack {
-                Spacer()
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        showingAddWordView.toggle()
-                    }) {
-                        Image(systemName: "plus")
-                            .font(.system(size: 24))
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color.blue)
-                            .clipShape(Circle())
-                            .shadow(radius: 10)
-                    }
+            // Floating Action Button
+            Button(action: {
+                showAddWordView.toggle()
+            }) {
+                Image(systemName: "plus.circle.fill")
+                    .resizable()
+                    .frame(width: 60, height: 60)
+                    .foregroundColor(.blue)
                     .padding()
-                }
             }
-        }
-        .navigationTitle(level)
-        .onAppear {
-            learnviewModel.fetchWords(for: level)
-        }
-        .sheet(isPresented: $showingAddWordView) {
-            addWordView(level: level)
-                .environmentObject(learnviewModel)
+            .sheet(isPresented: $showAddWordView) {
+                addWordView(level: level)
+                    .environmentObject(learnViewModel)
+            }
+            .padding() // Adjusts the spacing from the screen edges
         }
     }
 }

@@ -45,6 +45,7 @@ struct bookmarkView: View {
                     } label: {
                         Image(systemName: "flame")
                     } //setting Button & sheetView 예정
+                    //flame버튼을 새로고침 버튼으로 만들계획, 누르면 이력 단어 중 1개가 나옴
                     .tint(.black)
                 }
             }//toolbar
@@ -52,8 +53,6 @@ struct bookmarkView: View {
     }
 }
 
-struct bookmarkView_Previews: PreviewProvider {
-    static var previews: some View {
-        bookmarkView()
-    }
+#Preview {
+    bookmarkView()
 }

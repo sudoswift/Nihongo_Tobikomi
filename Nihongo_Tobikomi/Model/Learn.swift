@@ -6,3 +6,12 @@
 //
 
 import Foundation
+
+struct Learn: Identifiable {
+    var id: String
+    var grade: String
+    var testYear: Int
+    var jpn: String
+    var kr: String
+    var createdAt: Date
+}

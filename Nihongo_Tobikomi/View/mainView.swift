@@ -8,16 +8,22 @@
 import SwiftUI
 
 struct mainView: View {
+    @StateObject private var learnViewModel = LearnViewModel()
+    
     var body: some View {
         NavigationStack {
             List{
-                Text("JLPT N1")
-                Text("JLPT N2")
-                Text("JLPT N3")
-                Text("JLPT N4")
-                Text("JLPT N5")
+                ForEach(learnViewModel.jlptLevels, id: \.self){ level in
+                    NavigationLink(destination: JLPTView(learnViewModel: learnViewModel, level: level)){
+                        Text(level)
+                    }
+                }
             }//List
             .listStyle(.inset)
+            .onAppear{
+                learnViewModel.fetchUserData()
+                learnViewModel.fetchJLPTLevels()
+            }
                 .navigationTitle("ソヒョン")
                 .toolbar {
                     ToolbarItemGroup(placement: .navigationBarTrailing){
@@ -45,8 +51,6 @@ struct mainView: View {
     }
 }
 
-struct mainView_Previews: PreviewProvider {
-    static var previews: some View {
-        mainView()
-    }
+#Preview{
+    mainView()
 }

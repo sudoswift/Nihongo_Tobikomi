@@ -14,16 +14,12 @@ struct mainView: View {
         NavigationStack {
             List{
                 ForEach(learnViewModel.jlptLevels, id: \.self){ level in
-                    NavigationLink(destination: JLPTView(learnViewModel: learnViewModel, level: level)){
+                    NavigationLink(destination: jlptView(level: level)){
                         Text(level)
                     }
                 }
             }//List
             .listStyle(.inset)
-            .onAppear{
-                learnViewModel.fetchUserData()
-                learnViewModel.fetchJLPTLevels()
-            }
                 .navigationTitle("ソヒョン")
                 .toolbar {
                     ToolbarItemGroup(placement: .navigationBarTrailing){

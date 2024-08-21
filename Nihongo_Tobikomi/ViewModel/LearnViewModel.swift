@@ -10,6 +10,7 @@ import FirebaseFirestore
 
 class LearnViewModel: ObservableObject{
     @Published var words: [Learn] = []
+    
     private let db = Firestore.firestore()
     
     let dateFormatter: DateFormatter = {
@@ -40,5 +41,24 @@ class LearnViewModel: ObservableObject{
             
         }
     }//func fetchWords
+    
+    func addWord(level: String, jpn: String, kr: String, grade: String, testYear: Int, createdAt: Date) {
+        let wordsRef = db.collection("Learn").document(level).collection("Words").document()
+        
+        wordsRef.setData([
+            "jpn": jpn,
+            "kr": kr,
+            "grade": grade,
+            "testYear": testYear,
+            "createdAt": Timestamp(date: createdAt)
+        ]) { error in
+            if let error = error {
+                print("Error adding document: \(error.localizedDescription)")
+            } else {
+                // Successfully added the document
+                self.fetchWords(for: level) // Optionally refresh data
+            }
+        }
+    }//func addWord
     
 } //class

@@ -8,16 +8,14 @@
 import SwiftUI
 
 struct mainView: View {
-    @StateObject private var learnViewModel = LearnViewModel()
+    let jlptLevels = ["JLPT_N1", "JLPT_N2", "JLPT_N3", "JLPT_N4", "JLPT_N5"]
     
     var body: some View {
         NavigationStack {
-            List{
-                ForEach(learnViewModel.jlptLevels, id: \.self){ level in
-                    NavigationLink(destination: jlptView(level: level)){
-                        Text(level)
-                    }
-                }
+            List(jlptLevels, id: \.self){ level in
+                NavigationLink(destination: jlptView(level: level)){
+                    Text(level)
+                }//NavigationLink
             }//List
             .listStyle(.inset)
                 .navigationTitle("ソヒョン")

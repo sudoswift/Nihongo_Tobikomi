@@ -9,11 +9,11 @@ import SwiftUI
 import FirebaseFirestore
 
 struct jlptView: View {
-    var levels: String
-    @StateObject private var viewModel = LearnViewModel()
+    var level: String
+    @StateObject private var learnviewModel = LearnViewModel()
     
     var body: some View {
-        List(viewModel.words) { word in
+        List(learnviewModel.words) { word in
             VStack(alignment: .leading){
                 Text(word.jpn)
                     .font(.headline)
@@ -22,14 +22,18 @@ struct jlptView: View {
                 Text("Grade: \(word.grade) | Year: \(word.testYear)")
                     .font(.footnote)
                     .foregroundColor(.gray)
-                Text("Created at: \(word.createdAt, formatter: viewModel.dateFormatter)")
+                Text("Created at: \(word.createdAt, formatter: learnviewModel.dateFormatter)")
                     .font(.footnote)
                     .foregroundColor(.gray)
             }//VStack
         }//List
+        .navigationTitle(level)
+        .onAppear{
+            learnviewModel.fetchWords(for: level)
+        }
     }
 }
 
 #Preview {
-    jlptView(levels: "JLPT_N1")
+    jlptView(level: "JLPT_N1")
 }

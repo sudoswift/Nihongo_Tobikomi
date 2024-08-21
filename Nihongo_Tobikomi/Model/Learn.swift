@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct Learn: Identifiable {
-    var id: String
+struct Learn: Identifiable{
+    var id: String = UUID().uuidString
     var grade: String
     var testYear: Int
     var jpn: String

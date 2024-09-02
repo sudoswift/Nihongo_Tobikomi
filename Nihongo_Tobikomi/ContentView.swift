@@ -6,24 +6,32 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct ContentView: View {
-    init() {
-        UITabBar.appearance().backgroundColor = UIColor.systemGray2
-    }
+    @StateObject private var userViewModel = UserViewModel()
+
     var body: some View {
-        TabView{
-            mainView()
-                .tabItem {
-                    Label("学習", systemImage: "list.bullet.rectangle.portrait.fill")// list.dash
+        Group {
+            if Auth.auth().currentUser != nil {
+                TabView {
+                    mainView()
+                        .tabItem {
+                            Label("学習", systemImage: "list.bullet.rectangle.portrait.fill")
+                        }
+                    bookmarkView()
+                        .tabItem {
+                            Label("復習", systemImage: "book.fill")
+                        }
                 }
-            bookmarkView()
-                .tabItem {
-                    Label("復習", systemImage: "book.fill")
-                }
-        }//TabView
+            } else {
+                signInView()
+            }
+        }
+        .environmentObject(userViewModel)
     }
 }
+
 
 #Preview {
     ContentView()

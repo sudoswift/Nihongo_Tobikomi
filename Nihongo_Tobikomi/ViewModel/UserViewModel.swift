@@ -6,31 +6,59 @@
 //
 
 import Foundation
-import FirebaseAuth
 import Firebase
-import FirebaseStorage
+import FirebaseAuth
+import FirebaseFirestore
 
-class UserViewModel: ObservableObject{
-    //MARK: - Login
-    @Published var emailID: String = ""
-    //MARK: - Current User
-    @Published var currentUser: Firebase.User?
-    //MARK: - Register
-    @Published var registerEmail: String = ""
-    @Published var userName: String = ""
-    //MARK: - Fetch Current User's Data
-    @Published var currentUserData: User?
-    //MARK: - UserDefaults Log Status
-    @Published var logStatus: Bool = false{
-        didSet{
-            UserDefaults.standard.set(logStatus, forKey: "logStatus")
+class UserViewModel: ObservableObject {
+    @Published var user: User?
+    private var db = Firestore.firestore()
+
+    //MARK: - signIn
+    func signIn(email: String, password: String, completion: @escaping (Bool) -> Void) {
+        Auth.auth().signIn(withEmail: email, password: password) { result, error in
+            if let error = error {
+                print("Sign In Error: \(error.localizedDescription)")
+                completion(false)
+            } else {
+                self.fetchUserData(uid: result?.user.uid ?? "")
+                completion(true)
+            }
         }
     }
-    init(){
-        self.logStatus = UserDefaults.standard.bool(forKey: "logStatus")
+    //MARK: - signUp
+    func signUp(email: String, password: String, userName: String, completion: @escaping (Bool) -> Void) {
+        Auth.auth().createUser(withEmail: email, password: password) { result, error in
+            if let error = error {
+                print("Sign Up Error: \(error.localizedDescription)")
+                completion(false)
+            } else {
+                let uid = result?.user.uid ?? ""
+                let newUser = User(userName: userName, userUID: uid, userEmail: email)
+                self.saveUserData(user: newUser)
+                self.user = newUser
+                completion(true)
+            }
+        }
     }
-    //MARK:- Fetch Data
-    let database = Firestore.firestore()
-    //MARK: - 
-    
-}// class UserViewModel
+    //MARK: - fetchUserData
+    private func fetchUserData(uid: String) {
+        db.collection("users").document(uid).getDocument { document, error in
+            if let document = document, document.exists {
+                do {
+                    self.user = try document.data(as: User.self)
+                } catch {
+                    print("Error decoding user data: \(error)")
+                }
+            }
+        }
+    }
+    //MARK: - saveUserData
+    private func saveUserData(user: User) {
+        do {
+            try db.collection("users").document(user.userUID).setData(from: user)
+        } catch {
+            print("Error saving user data: \(error)")
+        }
+    }
+}

@@ -11,9 +11,6 @@ import FirebaseFirestoreSwift
 struct User: Identifiable, Codable{
     @DocumentID var id: String?
     var userName: String
-    var userStateMessage: String
-    var userIconURL: String
     var userUID: String
     var userEmail: String
-    var userTarget: String
 }

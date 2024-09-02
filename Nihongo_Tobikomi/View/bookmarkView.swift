@@ -43,7 +43,7 @@ struct bookmarkView: View {
                     Button {
                         print("setting")
                     } label: {
-                        Image(systemName: "flame")
+                        Image(systemName: "arrow.clockwise.circle")
                     } //setting Button & sheetView 예정
                     //flame버튼을 새로고침 버튼으로 만들계획, 누르면 이력 단어 중 1개가 나옴
                     .tint(.black)

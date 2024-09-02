@@ -12,6 +12,23 @@ struct jlptView: View {
     @StateObject private var learnViewModel = LearnViewModel()
     @State private var showAddWordView = false
 
+    private func color(for grade: String) -> Color {
+        switch grade {
+        case "N1":
+            return Color.mint // N1의 색상
+        case "N2":
+            return Color.orange // N2의 색상
+        case "N3":
+            return Color.gray // N3의 색상
+        case "N4":
+            return Color.green // N4의 색상
+        case "N5":
+            return Color.yellow // N5의 색상
+        default:
+            return Color.yellow // 기본 색상
+        }
+    }
+
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             VStack {
@@ -19,15 +36,24 @@ struct jlptView: View {
                     VStack(spacing: 8) { // 항목 간의 여백 설정
                         ForEach(learnViewModel.words) { word in
                             VStack(alignment: .leading, spacing: 10) {
+                                HStack {
+                                    Text(word.grade)
+                                        .font(.footnote)
+                                        .foregroundColor(.black)
+                                        .padding(8)
+                                        .background(color(for: word.grade)) // grade에 따른 색상 설정
+                                        .clipShape(RoundedRectangle(cornerRadius: 8)) // 모서리 둥글게
+                                    Spacer()
+                                    Text("기출년도: \(word.testYear)")
+                                        .font(.footnote)
+                                        .foregroundColor(.gray)
+                                }
                                 Text(word.jpn)
                                     .font(.headline)
                                     .frame(maxWidth: .infinity, alignment: .center) // 중앙 정렬
                                 Text(word.kr)
                                     .font(.subheadline)
                                     .frame(maxWidth: .infinity, alignment: .center) // 중앙 정렬
-                                Text("급수: \(word.grade) | 기출년도: \(word.testYear)")
-                                    .font(.footnote)
-                                    .foregroundColor(.gray)
                             }
                             .padding()
                             .background(Color.white) // 각 항목의 배경색을 흰색으로 설정
@@ -39,6 +65,7 @@ struct jlptView: View {
                     }
                     .padding(.vertical, 8) // ScrollView의 상하 여백 추가
                 }
+                .background(Color.white.edgesIgnoringSafeArea(.all)) // ScrollView의 배경색을 흰색으로 설정
                 .onAppear {
                     learnViewModel.fetchWords(for: level)
                 }
@@ -55,13 +82,13 @@ struct jlptView: View {
                     .foregroundColor(.blue)
                     .padding()
             }
-            .sheet(isPresented: $showAddWordView) {
+            .fullScreenCover(isPresented: $showAddWordView) {
                 addWordView(level: level)
                     .environmentObject(learnViewModel)
             }
             .padding() // 화면 가장자리와의 간격 조정
         }
-        .background(Color(UIColor.systemGray6).edgesIgnoringSafeArea(.all)) // List의 배경색을 회색으로 설정
+        .background(Color.white.edgesIgnoringSafeArea(.all)) // 전체 배경색을 흰색으로 설정
     }
 }
 

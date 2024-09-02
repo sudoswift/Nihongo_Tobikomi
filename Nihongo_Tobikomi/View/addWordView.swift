@@ -20,48 +20,51 @@ struct addWordView: View {
     var level: String
     
     var body: some View {
-           NavigationView {
-               VStack {
-                   Form {
-                       Section(header: Text("새로운 단어 추가")) {
-                           TextField("日本語", text: $jpn)
-                           TextField("한국어", text: $kr)
-                           TextField("JLPT 급수", text: $grade)
-                               .keyboardType(.numberPad)
-                           TextField("기출년도", value: $testYear, formatter: NumberFormatter())
-                               .keyboardType(.numberPad)
-                       }
-                   }
-                   
-                   Button(action: {
-                       addWordToFirestore()
-                   }) {
-                       Text("등록")
-                           .font(.headline)
-                           .frame(maxWidth: .infinity)
-                           .padding()
-                           .background(Color.blue)
-                           .foregroundColor(.white)
-                           .cornerRadius(8)
-                   }
-                   .padding()
-               }//VStack
-               .navigationTitle("새로운 단어를 추가하세요")
-               .navigationBarItems(trailing: Button(action: {
-                   presentationMode.wrappedValue.dismiss()
-               }) {
-                   Image(systemName: "xmark")
-                       .foregroundColor(.black)
-               })
-           }//NavigationView
-           .background(Color.white.ignoresSafeArea())
-       }
-       
-       private func addWordToFirestore() {
-           learnViewModel.addWord(level: level, jpn: jpn, kr: kr, grade: grade, testYear: testYear, createdAt: createdAt)
-           presentationMode.wrappedValue.dismiss()
-       }
-   }
+        NavigationView {
+            VStack {
+                VStack(spacing: 16) {
+                    TextField("日本語", text: $jpn)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    TextField("한국어", text: $kr)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    TextField("JLPT 급수", text: $grade)
+                        .keyboardType(.numberPad)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    TextField("기출년도", text: $testYear)
+                        .keyboardType(.numberPad)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                }
+                .padding()
+                
+                Button(action: {
+                    addWordToFirestore()
+                }) {
+                    Text("등록")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                .padding()
+            }
+            .navigationTitle("단어 추가")
+            .navigationBarItems(trailing: Button(action: {
+                presentationMode.wrappedValue.dismiss()
+            }) {
+                Image(systemName: "xmark")
+                    .foregroundColor(.black)
+            })
+        }
+        .background(Color.white.ignoresSafeArea())
+    }
+    
+    private func addWordToFirestore() {
+        learnViewModel.addWord(level: level, jpn: jpn, kr: kr, grade: grade, testYear: testYear, createdAt: createdAt)
+        presentationMode.wrappedValue.dismiss()
+    }
+}
 
 #Preview {
     addWordView(level: "JLPT_N1")

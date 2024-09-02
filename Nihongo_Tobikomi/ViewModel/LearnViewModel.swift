@@ -61,4 +61,18 @@ class LearnViewModel: ObservableObject{
         }
     }//func addWord
     
+    func checkIfWordExists(level: String, jpn: String, completion: @escaping (Bool) -> Void) {
+        db.collection("Learn").document(level).collection("Words")
+            .whereField("jpn", isEqualTo: jpn)
+            .getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    print("Error checking if word exists: \(error)")
+                    completion(false)
+                } else {
+                    let exists = !querySnapshot!.isEmpty
+                    completion(exists)
+                }
+            }
+    } //func checkIfWordExists
+    
 } //class

@@ -17,6 +17,9 @@ struct addWordView: View {
     @State private var testYear: String = ""
     @State private var createdAt: Date = Date()
     
+    @State private var showAlert: Bool = false
+    @State private var alertMessage: String = ""
+    
     var level: String
     
     var body: some View {
@@ -37,7 +40,7 @@ struct addWordView: View {
                 .padding()
                 
                 Button(action: {
-                    addWordToFirestore()
+                    checkForDuplicateAndAddWord()
                 }) {
                     Text("등록")
                         .font(.headline)
@@ -56,8 +59,22 @@ struct addWordView: View {
                 Image(systemName: "xmark")
                     .foregroundColor(.black)
             })
+            .alert(isPresented: $showAlert) {
+                Alert(title: Text("등록불가"), message: Text(alertMessage), dismissButton: .default(Text("확인")))
+            }
         }
         .background(Color.white.ignoresSafeArea())
+    }
+    
+    private func checkForDuplicateAndAddWord() {
+        learnViewModel.checkIfWordExists(level: level, jpn: jpn) { exists in
+            if exists {
+                alertMessage = "중복된 단어입니다"
+                showAlert = true
+            } else {
+                addWordToFirestore()
+            }
+        }
     }
     
     private func addWordToFirestore() {

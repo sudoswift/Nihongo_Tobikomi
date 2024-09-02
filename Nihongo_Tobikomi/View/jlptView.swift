@@ -21,10 +21,7 @@ struct jlptView: View {
                             .font(.headline)
                         Text(word.kr)
                             .font(.subheadline)
-                        Text("Grade: \(word.grade) | Year: \(word.testYear)")
-                            .font(.footnote)
-                            .foregroundColor(.gray)
-                        Text("Created at: \(word.createdAt, formatter: learnViewModel.dateFormatter)")
+                        Text("급수: \(word.grade) | 기출년도: \(word.testYear)")
                             .font(.footnote)
                             .foregroundColor(.gray)
                     }

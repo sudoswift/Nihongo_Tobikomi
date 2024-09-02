@@ -14,7 +14,7 @@ struct addWordView: View {
     @State private var jpn: String = ""
     @State private var kr: String = ""
     @State private var grade: String = ""
-    @State private var testYear: Int? = nil
+    @State private var testYear: String = ""
     @State private var createdAt: Date = Date()
     
     var level: String
@@ -58,7 +58,7 @@ struct addWordView: View {
        }
        
        private func addWordToFirestore() {
-           learnViewModel.addWord(level: level, jpn: jpn, kr: kr, grade: grade, testYear: testYear!, createdAt: createdAt)
+           learnViewModel.addWord(level: level, jpn: jpn, kr: kr, grade: grade, testYear: testYear, createdAt: createdAt)
            presentationMode.wrappedValue.dismiss()
        }
    }

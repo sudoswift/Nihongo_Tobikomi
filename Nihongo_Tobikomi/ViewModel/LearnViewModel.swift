@@ -29,7 +29,7 @@ class LearnViewModel: ObservableObject{
                     return Learn(
                         id: document.documentID,
                         grade: data["grade"] as? String ?? "",
-                        testYear: data["testYear"] as? Int ?? 0,
+                        testYear: data["testYear"] as? String ?? "",
                         jpn: data["jpn"] as? String ?? "",
                         kr: data["kr"] as? String ?? "",
                         createdAt: (data["createdAt"] as? Timestamp)?.dateValue() ?? Date()
@@ -42,7 +42,7 @@ class LearnViewModel: ObservableObject{
         }
     }//func fetchWords
     
-    func addWord(level: String, jpn: String, kr: String, grade: String, testYear: Int, createdAt: Date) {
+    func addWord(level: String, jpn: String, kr: String, grade: String, testYear: String, createdAt: Date) {
         let wordsRef = db.collection("Learn").document(level).collection("Words").document()
         
         wordsRef.setData([

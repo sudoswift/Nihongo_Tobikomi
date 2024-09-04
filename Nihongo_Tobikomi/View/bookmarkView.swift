@@ -8,51 +8,62 @@
 import SwiftUI
 
 struct bookmarkView: View {
+    @EnvironmentObject var userViewModel: UserViewModel // UserViewModel을 EnvironmentObject로 가져옴
+    @Environment(\.presentationMode) var presentationMode // 현재 뷰를 닫을 수 있는 환경 변수
+    
     var body: some View {
         NavigationStack {
-            VStack{
+            VStack {
                 VStack {
                     HStack {
                         Image(systemName: "clock.arrow.circlepath")
                         Text("履歴")
                         Spacer()
-                    }//HStack
+                    } // HStack
                     .padding()
-                    HStack{
+                    
+                    HStack {
                         Text("飛び込む")
                         Text("뛰어들다")
                     }
-                    HStack{
+                    
+                    HStack {
                         Text("呼び出す")
                         Text("호출하다")
                     }
-                }//履歴VStack
-                // N1~N2 는 List로 만들기
-            }//VStack
+                } // 履歴VStack
+                
+                // N1~N2는 List로 만들기
+            } // VStack
             .navigationBarTitle("復習", displayMode: .inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing){
+                ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        print("setting")
+                        // 로그아웃 처리
+                        userViewModel.signOut()
+                        // 현재 뷰를 닫고 로그인 뷰로 이동
+                        presentationMode.wrappedValue.dismiss()
                     } label: {
-                        Image(systemName: "gearshape")
-                    } //setting Button & sheetView 예정
+                        Image(systemName: "rectangle.portrait.and.arrow.forward") // 로그아웃 버튼
+                    }
                     .tint(.black)
                 }
-                ToolbarItem(placement: .navigationBarLeading){
+                
+                ToolbarItem(placement: .navigationBarLeading) {
                     Button {
-                        print("setting")
+                        print("refresh")
+                        // 새로 고침 버튼 로직 추가
                     } label: {
-                        Image(systemName: "arrow.clockwise.circle")
-                    } //setting Button & sheetView 예정
-                    //flame버튼을 새로고침 버튼으로 만들계획, 누르면 이력 단어 중 1개가 나옴
+                        Image(systemName: "arrow.clockwise.circle") // 새로 고침 버튼
+                    }
                     .tint(.black)
                 }
-            }//toolbar
+            } // toolbar
         }
     }
 }
 
 #Preview {
     bookmarkView()
+        .environmentObject(UserViewModel()) // UserViewModel 주입
 }

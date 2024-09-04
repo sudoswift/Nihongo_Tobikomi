@@ -62,28 +62,28 @@ struct mainView: View {
             .navigationTitle(userViewModel.user?.userName ?? "ソヒョン") // 로그인한 사용자 이름 또는 기본 제목
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    Button {
-                        print("alarm")
-                    } label: {
-                        Image(systemName: "bell")
-                    }
-                    .tint(.black)
+//                    Button {
+//                        print("alarm")
+//                    } label: {
+//                        Image(systemName: "bell")
+//                    }
+//                    .tint(.black)
 
                     Button {
-                        print("ranking")
+                        print("signOut")
                         userViewModel.signOut() // 로그아웃 처리
                         presentationMode.wrappedValue.dismiss() // 현재 뷰 닫기
                     } label: {
-                        Image(systemName: "medal")
+                        Image(systemName: "rectangle.portrait.and.arrow.forward")
                     }
                     .tint(.black)
 
-                    Button {
-                        print("setting")
-                    } label: {
-                        Image(systemName: "gearshape")
-                    }
-                    .tint(.black)
+//                    Button {
+//                        print("setting")
+//                    } label: {
+//                        Image(systemName: "gearshape")
+//                    }
+//                    .tint(.black)
                 }
             }
         }
@@ -101,4 +101,5 @@ struct mainView: View {
 
 #Preview {
     mainView()
+        .environmentObject(UserViewModel()) // UserViewModel 주입
 }

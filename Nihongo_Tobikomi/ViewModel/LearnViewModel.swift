@@ -7,13 +7,15 @@
 
 import Foundation
 import FirebaseFirestore
+import FirebaseAuth
 
 class LearnViewModel: ObservableObject {
     @Published var words: [Learn] = []
+    @Published var bookmarkedWords: [Learn] = [] // 북마크된 단어를 저장할 프로퍼티
     
     private let db = Firestore.firestore()
     private var currentUserUID: String? // 현재 로그인한 사용자의 UID를 저장
-    
+
     // MARK: - Fetch words
     func fetchWords(for level: String) {
         let wordsRef = db.collection("Learn").document(level).collection("Words")
@@ -69,55 +71,78 @@ class LearnViewModel: ObservableObject {
                 }
             }
     }
-
-    // MARK: - Bookmark Management
-    func toggleBookmark(for wordID: String) {
-        guard let uid = currentUserUID else { return }
-
-        let bookmarkRef = db.collection("Bookmark").document(uid)
+    
+    // MARK: - Bookmark functions
+    func toggleBookmark(for word: Learn) {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            print("User not logged in")
+            return
+        }
         
-        db.runTransaction({ (transaction, errorPointer) -> Any? in
-            let bookmarkDocument: DocumentSnapshot
-            do {
-                bookmarkDocument = try transaction.getDocument(bookmarkRef)
-            } catch let error as NSError {
-                print("Error getting document: \(error.localizedDescription)")
-                return nil
-            }
-
-            let currentBookmarks = bookmarkDocument.data()?["bookmarkedWords"] as? [String] ?? []
-            var updatedBookmarks = currentBookmarks
-
-            if updatedBookmarks.contains(wordID) {
-                // Remove from bookmarks if it already exists
-                updatedBookmarks.removeAll { $0 == wordID }
+        let bookmarkRef = db.collection("Bookmark").document(userID)
+        
+        bookmarkRef.getDocument { document, error in
+            if let document = document, document.exists {
+                var bookmarkData = document.data() ?? [:]
+                var bookmarkedIDs = bookmarkData["bookmarkedWords"] as? [String] ?? []
+                
+                if let index = bookmarkedIDs.firstIndex(of: word.id) {
+                    bookmarkedIDs.remove(at: index) // Remove bookmark
+                } else {
+                    bookmarkedIDs.append(word.id) // Add bookmark
+                }
+                
+                bookmarkRef.setData(["bookmarkedWords": bookmarkedIDs]) { error in
+                    if let error = error {
+                        print("Error updating bookmark: \(error.localizedDescription)")
+                    }
+                }
             } else {
-                // Add to bookmarks
-                updatedBookmarks.append(wordID)
-            }
-
-            transaction.updateData(["bookmarkedWords": updatedBookmarks], forDocument: bookmarkRef)
-            return nil
-        }) { (object, error) in
-            if let error = error {
-                print("Error updating bookmarks: \(error.localizedDescription)")
+                // Create a new bookmark document
+                bookmarkRef.setData(["bookmarkedWords": [word.id]]) { error in
+                    if let error = error {
+                        print("Error adding bookmark: \(error.localizedDescription)")
+                    }
+                }
             }
         }
     }
-
-    func isBookmarked(wordID: String, completion: @escaping (Bool) -> Void) {
-        guard let uid = currentUserUID else {
-            completion(false)
+    
+    func fetchBookmarkedWords() {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            print("User not logged in")
             return
         }
-
-        let bookmarkRef = db.collection("Bookmark").document(uid)
-        bookmarkRef.getDocument { document, error in
+        
+        db.collection("Bookmark").document(userID).getDocument { document, error in
             if let document = document, document.exists {
-                let bookmarkedWords = document.data()?["bookmarkedWords"] as? [String] ?? []
-                completion(bookmarkedWords.contains(wordID))
+                let bookmarkData = document.data() ?? [:]
+                if let bookmarkedIDs = bookmarkData["bookmarkedWords"] as? [String] {
+                    self.fetchWordsDetails(for: bookmarkedIDs)
+                }
             } else {
-                completion(false)
+                print("No bookmarks found for user.")
+            }
+        }
+    }
+    
+    private func fetchWordsDetails(for ids: [String]) {
+        let wordsRef = db.collectionGroup("Words").whereField(FieldPath.documentID(), in: ids)
+        wordsRef.getDocuments { snapshot, error in
+            if let snapshot = snapshot {
+                self.bookmarkedWords = snapshot.documents.compactMap { document in
+                    let data = document.data()
+                    return Learn(
+                        id: document.documentID,
+                        grade: data["grade"] as? String ?? "",
+                        testYear: data["testYear"] as? String ?? "",
+                        jpn: data["jpn"] as? String ?? "",
+                        kr: data["kr"] as? String ?? "",
+                        createdAt: (data["createdAt"] as? Timestamp)?.dateValue() ?? Date()
+                    )
+                }
+            } else {
+                print("Error fetching bookmarked words: \(error?.localizedDescription ?? "Unknown error")")
             }
         }
     }

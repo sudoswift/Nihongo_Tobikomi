@@ -11,7 +11,6 @@ struct jlptView: View {
     var level: String
     @StateObject private var learnViewModel = LearnViewModel()
     @State private var showAddWordView = false
-    @State private var bookmarkedItems: Set<String> = [] // 북마크된 아이템의 ID를 저장할 Set
 
     private func color(for grade: String) -> Color {
         switch grade {
@@ -27,18 +26,6 @@ struct jlptView: View {
             return Color.yellow
         default:
             return Color.yellow
-        }
-    }
-
-    private func isBookmarked(_ id: String) -> Bool {
-        bookmarkedItems.contains(id)
-    }
-
-    private func toggleBookmark(for id: String) {
-        if isBookmarked(id) {
-            bookmarkedItems.remove(id)
-        } else {
-            bookmarkedItems.insert(id)
         }
     }
 
@@ -72,15 +59,15 @@ struct jlptView: View {
                                 HStack {
                                     Spacer()
                                     Button(action: {
-                                        toggleBookmark(for: word.id)
+                                        learnViewModel.toggleBookmark(for: word)
                                     }) {
-                                        Image(systemName: isBookmarked(word.id) ? "star.fill" : "star") // 상태에 따라 이미지 변경
+                                        Image(systemName: learnViewModel.bookmarkedWords.contains(where: { $0.id == word.id }) ? "star.fill" : "star")
                                             .resizable()
                                             .frame(width: 25, height: 25)
-                                            .foregroundColor(isBookmarked(word.id) ? .yellow : .gray) // 상태에 따라 색상 변경
+                                            .foregroundColor(learnViewModel.bookmarkedWords.contains(where: { $0.id == word.id }) ? .yellow : .gray)
                                     }
                                 }
-                                .padding(.top, 8) // 별 버튼 위쪽 여백 추가
+                                .padding(.top, 8)
                             }
                             .padding()
                             .background(Color.white)
@@ -95,11 +82,11 @@ struct jlptView: View {
                 .background(Color.white.edgesIgnoringSafeArea(.all))
                 .onAppear {
                     learnViewModel.fetchWords(for: level)
+                    learnViewModel.fetchBookmarkedWords() // 북마크된 단어들을 가져옵니다
                 }
                 .navigationTitle(level)
             }
-
-            // Floating Action Button
+            
             Button(action: {
                 showAddWordView.toggle()
             }) {

@@ -8,43 +8,68 @@
 import SwiftUI
 
 struct bookmarkView: View {
-    @EnvironmentObject var userViewModel: UserViewModel // UserViewModel을 EnvironmentObject로 가져옴
-    @Environment(\.presentationMode) var presentationMode // 현재 뷰를 닫을 수 있는 환경 변수
+    @EnvironmentObject var userViewModel: UserViewModel
+    @StateObject private var learnViewModel = LearnViewModel()
+    
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         NavigationStack {
             VStack {
-                VStack {
-                    HStack {
-                        Image(systemName: "clock.arrow.circlepath")
-                        Text("履歴")
-                        Spacer()
-                    } // HStack
-                    .padding()
-                    
-                    HStack {
-                        Text("飛び込む")
-                        Text("뛰어들다")
-                    }
-                    
-                    HStack {
-                        Text("呼び出す")
-                        Text("호출하다")
-                    }
-                } // 履歴VStack
+                // 상단 헤더
+                HStack {
+                    Image(systemName: "clock.arrow.circlepath")
+                    Text("履歴") // 일본어 텍스트
+                    Spacer()
+                }
+                .padding()
                 
-                // N1~N2는 List로 만들기
-            } // VStack
-            .navigationBarTitle("復習", displayMode: .inline)
+                // 북마크된 단어를 보여주는 ScrollView와 ForEach
+                ScrollView {
+                    VStack(spacing: 16) {
+                        ForEach(learnViewModel.bookmarkedWords) { word in
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text(word.jpn)
+                                        .font(.headline)
+                                    Text(word.kr)
+                                        .font(.subheadline)
+                                }
+                                Spacer()
+                                HStack {
+                                    Text(word.grade)
+                                        .font(.footnote)
+                                        .foregroundColor(.black)
+                                        .padding(8)
+                                        .background(color(for: word.grade))
+                                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                                    Text("기출년도: \(word.testYear)")
+                                        .font(.footnote)
+                                        .foregroundColor(.gray)
+                                }
+                            }
+                            .padding()
+                            .background(Color.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            .shadow(color: Color.gray.opacity(0.3), radius: 4, x: 0, y: 2)
+                            .padding(.horizontal, 16)
+                        }
+                    }
+                    .padding(.vertical, 8)
+                }
+                .background(Color.white.edgesIgnoringSafeArea(.all))
+                .onAppear {
+                    learnViewModel.fetchBookmarkedWords() // 북마크된 단어들을 가져옵니다
+                }
+            }
+            .navigationBarTitle("북마크", displayMode: .inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        // 로그아웃 처리
                         userViewModel.signOut()
-                        // 현재 뷰를 닫고 로그인 뷰로 이동
                         presentationMode.wrappedValue.dismiss()
                     } label: {
-                        Image(systemName: "rectangle.portrait.and.arrow.forward") // 로그아웃 버튼
+                        Image(systemName: "rectangle.portrait.and.arrow.forward")
                     }
                     .tint(.black)
                 }
@@ -52,13 +77,30 @@ struct bookmarkView: View {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
                         print("refresh")
-                        // 새로 고침 버튼 로직 추가
+                        learnViewModel.fetchBookmarkedWords() // 북마크 새로 고침
                     } label: {
-                        Image(systemName: "arrow.clockwise.circle") // 새로 고침 버튼
+                        Image(systemName: "arrow.clockwise.circle")
                     }
                     .tint(.black)
                 }
-            } // toolbar
+            }
+        }
+    }
+    
+    private func color(for grade: String) -> Color {
+        switch grade {
+        case "N1":
+            return Color.mint
+        case "N2":
+            return Color.orange
+        case "N3":
+            return Color.gray
+        case "N4":
+            return Color.green
+        case "N5":
+            return Color.yellow
+        default:
+            return Color.yellow
         }
     }
 }

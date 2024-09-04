@@ -34,16 +34,12 @@ class UserViewModel: ObservableObject {
         }
     }
     
-    //MARK: - Firebase User 컬렉션에서 정보를 가져옴
     private func fetchUserData(uid: String) {
-        //사용자의 데이터를 가져옴
         let db = Firestore.firestore()
         db.collection("User").document(uid).getDocument { [weak self] document, error in
             if let document = document, document.exists {
                 do {
-                    // Firestore에서 가져온 데이터 디코딩
                     let userData = try document.data(as: User.self)
-                    // user 프로퍼티 업데이트
                     self?.user = userData
                 } catch {
                     print("사용자 데이터 디코딩 오류: \(error.localizedDescription)")
@@ -53,7 +49,6 @@ class UserViewModel: ObservableObject {
             }
         }
     }
-
     
     //MARK: - 로그인
     func signIn(email: String, password: String, completion: @escaping (Bool) -> Void) {
@@ -62,7 +57,6 @@ class UserViewModel: ObservableObject {
                 print("Sign In Error: \(error.localizedDescription)")
                 completion(false)
             } else {
-                //Auth.auth().signIn으로 email과 password가 일치 했을 때 로그인이 되고 userUID를 가져와서 fetchUserData에서 uid를 기반으로 유저의 정보를 가져온다.
                 self.fetchUserData(uid: authResult?.user.uid ?? "")
                 completion(true)
             }
@@ -76,15 +70,15 @@ class UserViewModel: ObservableObject {
                 print("Sign Up Error: \(error.localizedDescription)")
                 completion(false)
             } else {
-                let uid = authResult?.user.uid ?? "" // uid 생성
-                let newUser = User(userName: userName, userUID: uid, userEmail: email) //newUser에 회원가입 화면에서 입력받은 userName, email과 윗줄의 uid를 저장함
-                self.saveUserData(user: newUser) //saveUserData를 이용해 firebase에 user 정보를 입력함(userName, userEmail, userUID)
+                let uid = authResult?.user.uid ?? ""
+                let newUser = User(userName: userName, userUID: uid, userEmail: email)
+                self.saveUserData(user: newUser)
                 self.user = newUser
                 completion(true)
             }
         }
     }
-    //MARK: - 회원가입 시 firebase의 User 컬렉션에 정보 입력
+    //MARK: - 회원가입 후 firebase의 User 컬렉션에 저장
     private func saveUserData(user: User) {
         let db = Firestore.firestore()
         do {
@@ -93,5 +87,14 @@ class UserViewModel: ObservableObject {
             print("Error saving user data: \(error.localizedDescription)")
         }
     }
-
+    //MARK: - 로그아웃
+    func signOut() {
+        do {
+            try Auth.auth().signOut()
+        } catch {
+            print("Sign Out Error: \(error.localizedDescription)")
+        }
+    }
+    
 }
+

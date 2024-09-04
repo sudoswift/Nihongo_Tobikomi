@@ -14,6 +14,7 @@ struct signInView: View {
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
     @State private var showingSignUpSheet: Bool = false
+    @State private var navigateToMain: Bool = false
     
     var body: some View {
         NavigationView {
@@ -47,6 +48,10 @@ struct signInView: View {
                         .foregroundColor(.secondary)
                         .padding()
                 }
+                
+                NavigationLink(destination: mainView(), isActive: $navigateToMain) {
+                    EmptyView()
+                }
             }
             .navigationTitle("로그인")
             .alert(isPresented: $showAlert) {
@@ -55,6 +60,11 @@ struct signInView: View {
             .fullScreenCover(isPresented: $showingSignUpSheet) {
                 signUpView()
             }
+            .onChange(of: userViewModel.user) { user in
+                if user != nil {
+                    navigateToMain = true
+                }
+            }
         }
         .background(Color.white.ignoresSafeArea())
     }
@@ -62,7 +72,7 @@ struct signInView: View {
     private func signIn() {
         userViewModel.signIn(email: email, password: password) { success in
             if success {
-                // Navigate to main content
+                navigateToMain = true
             } else {
                 alertMessage = "로그인 정보가 올바르지 않습니다."
                 showAlert = true

@@ -6,32 +6,30 @@
 //
 
 import SwiftUI
-import FirebaseAuth
 
 struct ContentView: View {
     @StateObject private var userViewModel = UserViewModel()
-
+    
     var body: some View {
-        Group {
-            if Auth.auth().currentUser != nil {
-                TabView {
-                    mainView()
-                        .tabItem {
-                            Label("学習", systemImage: "list.bullet.rectangle.portrait.fill")
-                        }
-                    bookmarkView()
-                        .tabItem {
-                            Label("復習", systemImage: "book.fill")
-                        }
-                }
-            } else {
-                signInView()
+        if userViewModel.user != nil{
+            //userViewModel.user가 로그인 되어 있을 때
+            TabView {
+                mainView()
+                    .tabItem {
+                        Label("学習", systemImage: "list.bullet.rectangle.portrait.fill")
+                    }
+                bookmarkView()
+                    .tabItem {
+                        Label("復習", systemImage: "book.fill")
+                    }
             }
+        } else {
+            //userViewModel.user가 로그인 되어 있지 않을 때
+            signInView()
         }
-        .environmentObject(userViewModel)
+
     }
 }
-
 
 #Preview {
     ContentView()

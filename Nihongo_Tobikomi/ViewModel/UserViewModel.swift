@@ -5,16 +5,39 @@
 //  Created by ioio on 2023/10/03.
 //
 
-import Foundation
 import Firebase
-import FirebaseAuth
-import FirebaseFirestore
+import SwiftUI
 
 class UserViewModel: ObservableObject {
     @Published var user: User?
-    private var db = Firestore.firestore()
-
-    //MARK: - signIn
+    private var isSignIn: AuthStateDidChangeListenerHandle?
+    
+    init() {
+        setupAuthListener()
+    }
+    
+    private func setupAuthListener() {
+        isSignIn = Auth.auth().addStateDidChangeListener { [weak self] auth, user in
+            if let user = user {
+                // 사용자가 로그인된 상태일 때
+                self?.fetchUserData(uid: user.uid)
+            } else {
+                // 사용자가 로그인되지 않은 상태일 때
+                self?.user = nil
+            }
+        }
+    }
+    
+    deinit {
+        if let listener = isSignIn {
+            Auth.auth().removeStateDidChangeListener(listener)
+        }
+    }
+    
+    private func fetchUserData(uid: String) {
+        // 사용자 데이터를 가져오는 로직
+    }
+    
     func signIn(email: String, password: String, completion: @escaping (Bool) -> Void) {
         Auth.auth().signIn(withEmail: email, password: password) { result, error in
             if let error = error {
@@ -26,7 +49,7 @@ class UserViewModel: ObservableObject {
             }
         }
     }
-    //MARK: - signUp
+    
     func signUp(email: String, password: String, userName: String, completion: @escaping (Bool) -> Void) {
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
             if let error = error {
@@ -41,24 +64,10 @@ class UserViewModel: ObservableObject {
             }
         }
     }
-    //MARK: - fetchUserData
-    private func fetchUserData(uid: String) {
-        db.collection("users").document(uid).getDocument { document, error in
-            if let document = document, document.exists {
-                do {
-                    self.user = try document.data(as: User.self)
-                } catch {
-                    print("Error decoding user data: \(error)")
-                }
-            }
-        }
-    }
-    //MARK: - saveUserData
+    
     private func saveUserData(user: User) {
-        do {
-            try db.collection("users").document(user.userUID).setData(from: user)
-        } catch {
-            print("Error saving user data: \(error)")
-        }
+        // 사용자 데이터를 저장하는 로직
     }
 }
+
+

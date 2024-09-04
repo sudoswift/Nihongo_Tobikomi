@@ -11,21 +11,34 @@ struct jlptView: View {
     var level: String
     @StateObject private var learnViewModel = LearnViewModel()
     @State private var showAddWordView = false
+    @State private var bookmarkedItems: Set<String> = [] // 북마크된 아이템의 ID를 저장할 Set
 
     private func color(for grade: String) -> Color {
         switch grade {
         case "N1":
-            return Color.mint // N1의 색상
+            return Color.mint
         case "N2":
-            return Color.orange // N2의 색상
+            return Color.orange
         case "N3":
-            return Color.gray // N3의 색상
+            return Color.gray
         case "N4":
-            return Color.green // N4의 색상
+            return Color.green
         case "N5":
-            return Color.yellow // N5의 색상
+            return Color.yellow
         default:
-            return Color.yellow // 기본 색상
+            return Color.yellow
+        }
+    }
+
+    private func isBookmarked(_ id: String) -> Bool {
+        bookmarkedItems.contains(id)
+    }
+
+    private func toggleBookmark(for id: String) {
+        if isBookmarked(id) {
+            bookmarkedItems.remove(id)
+        } else {
+            bookmarkedItems.insert(id)
         }
     }
 
@@ -33,7 +46,7 @@ struct jlptView: View {
         ZStack(alignment: .bottomTrailing) {
             VStack {
                 ScrollView {
-                    VStack(spacing: 8) { // 항목 간의 여백 설정
+                    VStack(spacing: 8) {
                         ForEach(learnViewModel.words) { word in
                             VStack(alignment: .leading, spacing: 10) {
                                 HStack {
@@ -41,8 +54,8 @@ struct jlptView: View {
                                         .font(.footnote)
                                         .foregroundColor(.black)
                                         .padding(8)
-                                        .background(color(for: word.grade)) // grade에 따른 색상 설정
-                                        .clipShape(RoundedRectangle(cornerRadius: 8)) // 모서리 둥글게
+                                        .background(color(for: word.grade))
+                                        .clipShape(RoundedRectangle(cornerRadius: 8))
                                     Spacer()
                                     Text("기출년도: \(word.testYear)")
                                         .font(.footnote)
@@ -50,28 +63,42 @@ struct jlptView: View {
                                 }
                                 Text(word.jpn)
                                     .font(.headline)
-                                    .frame(maxWidth: .infinity, alignment: .center) // 중앙 정렬
+                                    .frame(maxWidth: .infinity, alignment: .center)
                                 Text(word.kr)
                                     .font(.subheadline)
-                                    .frame(maxWidth: .infinity, alignment: .center) // 중앙 정렬
+                                    .frame(maxWidth: .infinity, alignment: .center)
+                                
+                                // 별 버튼을 포함한 HStack 추가
+                                HStack {
+                                    Spacer()
+                                    Button(action: {
+                                        toggleBookmark(for: word.id)
+                                    }) {
+                                        Image(systemName: isBookmarked(word.id) ? "star.fill" : "star") // 상태에 따라 이미지 변경
+                                            .resizable()
+                                            .frame(width: 25, height: 25)
+                                            .foregroundColor(isBookmarked(word.id) ? .yellow : .gray) // 상태에 따라 색상 변경
+                                    }
+                                }
+                                .padding(.top, 8) // 별 버튼 위쪽 여백 추가
                             }
                             .padding()
-                            .background(Color.white) // 각 항목의 배경색을 흰색으로 설정
-                            .clipShape(RoundedRectangle(cornerRadius: 8)) // 모서리 둥글게
-                            .shadow(color: Color.gray.opacity(0.3), radius: 4, x: 0, y: 2) // 그림자 추가
-                            .padding(.horizontal, 16) // 양쪽에 여백 추가
-                            .frame(maxWidth: .infinity, minHeight: 100) // 세로 길이 조정
+                            .background(Color.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            .shadow(color: Color.gray.opacity(0.3), radius: 4, x: 0, y: 2)
+                            .padding(.horizontal, 16)
+                            .frame(maxWidth: .infinity, minHeight: 100)
                         }
                     }
-                    .padding(.vertical, 8) // ScrollView의 상하 여백 추가
+                    .padding(.vertical, 8)
                 }
-                .background(Color.white.edgesIgnoringSafeArea(.all)) // ScrollView의 배경색을 흰색으로 설정
+                .background(Color.white.edgesIgnoringSafeArea(.all))
                 .onAppear {
                     learnViewModel.fetchWords(for: level)
                 }
                 .navigationTitle(level)
             }
-            
+
             // Floating Action Button
             Button(action: {
                 showAddWordView.toggle()
@@ -86,12 +113,11 @@ struct jlptView: View {
                 addWordView(level: level)
                     .environmentObject(learnViewModel)
             }
-            .padding() // 화면 가장자리와의 간격 조정
+            .padding()
         }
-        .background(Color.white.edgesIgnoringSafeArea(.all)) // 전체 배경색을 흰색으로 설정
+        .background(Color.white.edgesIgnoringSafeArea(.all))
     }
 }
-
 
 #Preview {
     jlptView(level: "JLPT_N1")

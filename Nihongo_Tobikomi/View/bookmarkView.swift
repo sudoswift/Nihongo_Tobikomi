@@ -73,16 +73,6 @@ struct bookmarkView: View {
                     }
                     .tint(.black)
                 }
-                
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        print("refresh")
-                        learnViewModel.fetchBookmarkedWords() // 모든 북마크된 단어를 새로 고칩니다
-                    } label: {
-                        Image(systemName: "arrow.clockwise.circle")
-                    }
-                    .tint(.black)
-                }
             }
         }
     }

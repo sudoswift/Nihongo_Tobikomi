@@ -45,6 +45,13 @@ struct signUpView: View {
                 .padding()
             }
             .navigationTitle("회원가입")
+            .navigationBarItems(trailing: Button(action: {
+                // SignInView로 돌아가기 위해 현재 뷰를 닫음
+                presentationMode.wrappedValue.dismiss()
+            }) {
+                Image(systemName: "xmark")
+                    .foregroundColor(.black)
+            })
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("회원가입 실패"), message: Text(alertMessage), dismissButton: .default(Text("확인")))
             }
@@ -63,10 +70,6 @@ struct signUpView: View {
             }
         }
     }
-}
-
-#Preview {
-    signUpView()
 }
 
 #Preview {

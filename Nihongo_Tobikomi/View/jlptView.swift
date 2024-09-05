@@ -28,6 +28,21 @@ struct jlptView: View {
             return Color.yellow
         }
     }
+    
+    private func bookmarkButton(for word: Learn) -> some View {
+        let isBookmarked = learnViewModel.bookmarkedWords.contains(where: { $0.id == word.id })
+        let imageName = isBookmarked ? "star.fill" : "star"
+        let color: Color = isBookmarked ? .yellow : .gray
+
+        return Button(action: {
+            learnViewModel.toggleBookmark(for: word)
+        }) {
+            Image(systemName: imageName)
+                .resizable()
+                .frame(width: 25, height: 25)
+                .foregroundColor(color)
+        }
+    }
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
@@ -55,17 +70,10 @@ struct jlptView: View {
                                     .font(.subheadline)
                                     .frame(maxWidth: .infinity, alignment: .center)
                                 
-                                // 별 버튼을 포함한 HStack 추가
+                                // 북마크 버튼
                                 HStack {
                                     Spacer()
-                                    Button(action: {
-                                        learnViewModel.toggleBookmark(for: word)
-                                    }) {
-                                        Image(systemName: learnViewModel.bookmarkedWords.contains(where: { $0.id == word.id }) ? "star.fill" : "star")
-                                            .resizable()
-                                            .frame(width: 25, height: 25)
-                                            .foregroundColor(learnViewModel.bookmarkedWords.contains(where: { $0.id == word.id }) ? .yellow : .gray)
-                                    }
+                                    bookmarkButton(for: word) // 매개변수로 word 전달
                                 }
                                 .padding(.top, 8)
                             }
@@ -82,7 +90,7 @@ struct jlptView: View {
                 .background(Color.white.edgesIgnoringSafeArea(.all))
                 .onAppear {
                     learnViewModel.fetchWords(for: level)
-                    learnViewModel.fetchBookmarkedWords() // 북마크된 단어들을 가져옵니다
+                    learnViewModel.fetchBookmarkedWords(for: level)
                 }
                 .navigationTitle(level)
             }

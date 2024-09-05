@@ -14,7 +14,6 @@ class LearnViewModel: ObservableObject {
     @Published var bookmarkedWords: [Learn] = [] // 북마크된 단어를 저장할 프로퍼티
     
     private let db = Firestore.firestore()
-    private var currentUserUID: String? // 현재 로그인한 사용자의 UID를 저장
 
     // MARK: - Fetch words
     func fetchWords(for level: String) {
@@ -107,32 +106,37 @@ class LearnViewModel: ObservableObject {
             }
         }
     }
-    
-    func fetchBookmarkedWords() {
+
+    // MARK: - Fetch Bookmarked Words
+    func fetchBookmarkedWords(for level: String) {
         guard let userID = Auth.auth().currentUser?.uid else {
             print("User not logged in")
             return
         }
         
-        db.collection("Bookmark").document(userID).getDocument { document, error in
+        let bookmarkRef = db.collection("Bookmark").document(userID)
+        bookmarkRef.getDocument { document, error in
             if let document = document, document.exists {
-                let bookmarkData = document.data() ?? [:]
-                if let bookmarkedIDs = bookmarkData["bookmarkedWords"] as? [String] {
-                    self.fetchWordsDetails(for: bookmarkedIDs)
+                if let bookmarkedIDs = document.data()?["bookmarkedWords"] as? [String] {
+                    self.fetchWordsDetails(for: bookmarkedIDs, level: level)
                 }
             } else {
                 print("No bookmarks found for user.")
             }
         }
     }
-    
-    private func fetchWordsDetails(for ids: [String]) {
-        let wordsRef = db.collectionGroup("Words").whereField(FieldPath.documentID(), in: ids)
-        wordsRef.getDocuments { snapshot, error in
-            if let snapshot = snapshot {
-                self.bookmarkedWords = snapshot.documents.compactMap { document in
-                    let data = document.data()
-                    return Learn(
+
+    private func fetchWordsDetails(for ids: [String], level: String) {
+        let group = DispatchGroup()
+        var tempBookmarkedWords: [Learn] = []
+
+        for id in ids {
+            group.enter()
+            let docRef = db.collection("Learn").document(level).collection("Words").document(id)
+            docRef.getDocument { document, error in
+                if let document = document, document.exists {
+                    let data = document.data() ?? [:]
+                    let word = Learn(
                         id: document.documentID,
                         grade: data["grade"] as? String ?? "",
                         testYear: data["testYear"] as? String ?? "",
@@ -140,10 +144,16 @@ class LearnViewModel: ObservableObject {
                         kr: data["kr"] as? String ?? "",
                         createdAt: (data["createdAt"] as? Timestamp)?.dateValue() ?? Date()
                     )
+                    tempBookmarkedWords.append(word)
+                } else {
+                    print("Error fetching word details: \(error?.localizedDescription ?? "Unknown error")")
                 }
-            } else {
-                print("Error fetching bookmarked words: \(error?.localizedDescription ?? "Unknown error")")
+                group.leave()
             }
+        }
+
+        group.notify(queue: .main) {
+            self.bookmarkedWords = tempBookmarkedWords
         }
     }
 }

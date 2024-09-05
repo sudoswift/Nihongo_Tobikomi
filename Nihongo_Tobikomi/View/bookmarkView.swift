@@ -59,7 +59,8 @@ struct bookmarkView: View {
                 }
                 .background(Color.white.edgesIgnoringSafeArea(.all))
                 .onAppear {
-                    learnViewModel.fetchBookmarkedWords() // 북마크된 단어들을 가져옵니다
+                    // level을 적절히 설정
+                    learnViewModel.fetchBookmarkedWords(for: "JLPT_N1")
                 }
             }
             .navigationBarTitle("북마크", displayMode: .inline)
@@ -77,7 +78,8 @@ struct bookmarkView: View {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
                         print("refresh")
-                        learnViewModel.fetchBookmarkedWords() // 북마크 새로 고침
+                        // level을 적절히 설정
+                        learnViewModel.fetchBookmarkedWords(for: "JLPT_N1")
                     } label: {
                         Image(systemName: "arrow.clockwise.circle")
                     }

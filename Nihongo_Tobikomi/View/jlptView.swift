@@ -90,7 +90,7 @@ struct jlptView: View {
                 .background(Color.white.edgesIgnoringSafeArea(.all))
                 .onAppear {
                     learnViewModel.fetchWords(for: level)
-                    learnViewModel.fetchBookmarkedWords(for: level)
+                    learnViewModel.fetchBookmarkedWords()
                 }
                 .navigationTitle(level)
             }

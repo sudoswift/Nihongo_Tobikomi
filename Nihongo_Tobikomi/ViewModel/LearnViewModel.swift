@@ -5,14 +5,15 @@
 //  Created by ioio on 8/18/24.
 //
 
+// LearnViewModel.swift
 import Foundation
 import FirebaseFirestore
 import FirebaseAuth
 
 class LearnViewModel: ObservableObject {
     @Published var words: [Learn] = []
-    @Published var bookmarkedWords: [Learn] = [] // 북마크된 단어를 저장할 프로퍼티
-    
+    @Published var bookmarkedWords: [Learn] = []
+
     private let db = Firestore.firestore()
 
     // MARK: - Fetch words
@@ -51,7 +52,7 @@ class LearnViewModel: ObservableObject {
             if let error = error {
                 print("Error adding document: \(error.localizedDescription)")
             } else {
-                self.fetchWords(for: level) // Optionally refresh data
+                self.fetchWords(for: level)
             }
         }
     }
@@ -108,7 +109,7 @@ class LearnViewModel: ObservableObject {
     }
 
     // MARK: - Fetch Bookmarked Words
-    func fetchBookmarkedWords(for level: String) {
+    func fetchBookmarkedWords() {
         guard let userID = Auth.auth().currentUser?.uid else {
             print("User not logged in")
             return
@@ -118,7 +119,7 @@ class LearnViewModel: ObservableObject {
         bookmarkRef.getDocument { document, error in
             if let document = document, document.exists {
                 if let bookmarkedIDs = document.data()?["bookmarkedWords"] as? [String] {
-                    self.fetchWordsDetails(for: bookmarkedIDs, level: level)
+                    self.fetchWordsDetails(for: bookmarkedIDs)
                 }
             } else {
                 print("No bookmarks found for user.")
@@ -126,34 +127,38 @@ class LearnViewModel: ObservableObject {
         }
     }
 
-    private func fetchWordsDetails(for ids: [String], level: String) {
-        let group = DispatchGroup()
-        var tempBookmarkedWords: [Learn] = []
+    private func fetchWordsDetails(for ids: [String]) {
+        self.bookmarkedWords = []
 
         for id in ids {
-            group.enter()
-            let docRef = db.collection("Learn").document(level).collection("Words").document(id)
-            docRef.getDocument { document, error in
-                if let document = document, document.exists {
-                    let data = document.data() ?? [:]
-                    let word = Learn(
-                        id: document.documentID,
-                        grade: data["grade"] as? String ?? "",
-                        testYear: data["testYear"] as? String ?? "",
-                        jpn: data["jpn"] as? String ?? "",
-                        kr: data["kr"] as? String ?? "",
-                        createdAt: (data["createdAt"] as? Timestamp)?.dateValue() ?? Date()
-                    )
-                    tempBookmarkedWords.append(word)
+            db.collection("Learn").getDocuments { snapshot, error in
+                if let snapshot = snapshot {
+                    for document in snapshot.documents {
+                        let level = document.documentID
+                        self.db.collection("Learn").document(level).collection("Words")
+                            .document(id).getDocument { docSnapshot, error in
+                                if let docSnapshot = docSnapshot, docSnapshot.exists {
+                                    let data = docSnapshot.data()
+                                    let word = Learn(
+                                        id: docSnapshot.documentID,
+                                        grade: data?["grade"] as? String ?? "",
+                                        testYear: data?["testYear"] as? String ?? "",
+                                        jpn: data?["jpn"] as? String ?? "",
+                                        kr: data?["kr"] as? String ?? "",
+                                        createdAt: (data?["createdAt"] as? Timestamp)?.dateValue() ?? Date()
+                                    )
+                                    DispatchQueue.main.async {
+                                        self.bookmarkedWords.append(word)
+                                    }
+                                } else {
+                                    print("Error fetching word details: \(error?.localizedDescription ?? "Unknown error")")
+                                }
+                            }
+                    }
                 } else {
-                    print("Error fetching word details: \(error?.localizedDescription ?? "Unknown error")")
+                    print("Error fetching Learn documents: \(error?.localizedDescription ?? "Unknown error")")
                 }
-                group.leave()
             }
-        }
-
-        group.notify(queue: .main) {
-            self.bookmarkedWords = tempBookmarkedWords
         }
     }
 }

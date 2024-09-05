@@ -22,11 +22,11 @@ struct signInView: View {
                 TextField("이메일", text: $email)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
-                
+                    .textInputAutocapitalization(.never)
                 SecureField("비밀번호", text: $password)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
-                
+                    .textInputAutocapitalization(.never)
                 Button(action: {
                     signIn()
                 }) {

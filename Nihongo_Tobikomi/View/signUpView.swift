@@ -22,7 +22,7 @@ struct signUpView: View {
                 TextField("이메일", text: $email)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
-                
+                    .textInputAutocapitalization(.never)
                 SecureField("비밀번호", text: $password)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
@@ -30,7 +30,7 @@ struct signUpView: View {
                 TextField("사용자 이름", text: $userName)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
-                
+                    .textInputAutocapitalization(.never)
                 Button(action: {
                     signUp()
                 }) {

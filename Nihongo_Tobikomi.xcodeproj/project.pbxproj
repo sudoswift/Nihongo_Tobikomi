@@ -32,6 +32,7 @@
 		6FD58BBB2ACC2B7300D5D68D /* UploadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD58BBA2ACC2B7300D5D68D /* UploadViewModel.swift */; };
 		6FE6A4182C881BB600BB74C3 /* signInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE6A4172C881BB600BB74C3 /* signInView.swift */; };
 		6FE6A41A2C881BC100BB74C3 /* signUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE6A4192C881BC100BB74C3 /* signUpView.swift */; };
+		6FE6A41C2C89A2DD00BB74C3 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6FE6A41B2C89A2DD00BB74C3 /* Launch Screen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +55,7 @@
 		6FD58BBA2ACC2B7300D5D68D /* UploadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadViewModel.swift; sourceTree = "<group>"; };
 		6FE6A4172C881BB600BB74C3 /* signInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = signInView.swift; sourceTree = "<group>"; };
 		6FE6A4192C881BC100BB74C3 /* signUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = signUpView.swift; sourceTree = "<group>"; };
+		6FE6A41B2C89A2DD00BB74C3 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 				6F5B80A62A37318B00FB2576 /* Nihongo-Tobikomi-Info.plist */,
 				6F5B80972A372C1200FB2576 /* ContentView.swift */,
 				6F5B80952A372C1200FB2576 /* Nihongo_TobikomiApp.swift */,
+				6FE6A41B2C89A2DD00BB74C3 /* Launch Screen.storyboard */,
 				6F5B80A32A372C7E00FB2576 /* View */,
 				6F5B80A42A372C8600FB2576 /* Model */,
 				6F5B80A52A372C8C00FB2576 /* ViewModel */,
@@ -221,6 +224,7 @@
 			files = (
 				6FB537FE2AB17615006F5C20 /* GoogleService-Info.plist in Resources */,
 				6F5B809D2A372C1300FB2576 /* Preview Assets.xcassets in Resources */,
+				6FE6A41C2C89A2DD00BB74C3 /* Launch Screen.storyboard in Resources */,
 				6F5B809A2A372C1300FB2576 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -382,6 +386,7 @@
 				INFOPLIST_FILE = "Nihongo-Tobikomi-Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -411,6 +416,7 @@
 				INFOPLIST_FILE = "Nihongo-Tobikomi-Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
